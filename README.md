@@ -5,6 +5,12 @@ company **TLS**. Cualquier persona con el enlace puede entrar, poner su
 nombre y empezar a añadir temas, tareas, ideas y actas — todo en tiempo real
 y compartido con el resto del equipo.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpaulmunozdaudin%2FTLS-ORGANIZACI-N&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_WORKSPACE_SLUG&envDescription=Claves%20de%20tu%20proyecto%20de%20Supabase%20(ver%20la%20secci%C3%B3n%203%20del%20README%20del%20repo)&project-name=tls-organizacion&repository-name=tls-organizacion)
+
+Antes de pulsar el botón, crea tu proyecto de Supabase y ejecuta el SQL
+([paso 3](#3-cómo-configurar-supabase)) para tener a mano la URL y la clave
+que Vercel te pedirá.
+
 ## 1. Qué incluye el proyecto
 
 - **Next.js 16 (App Router) + TypeScript + Tailwind CSS 4**
@@ -111,16 +117,23 @@ app muestra un aviso de "Falta configurar Supabase" en lugar de fallar.
 
 ## 5. Cómo desplegar en Vercel
 
-1. Sube este repositorio a GitHub (o el proveedor que uses).
-2. Entra en [vercel.com/new](https://vercel.com/new) e importa el
-   repositorio.
-3. En **Environment Variables**, añade las mismas tres variables del punto 4
-   (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-   `NEXT_PUBLIC_WORKSPACE_SLUG`).
-4. Deploy. Vercel detecta Next.js automáticamente (no requiere configuración
+**Opción rápida (recomendada):** pulsa el botón **Deploy with Vercel** de
+arriba. Te llevará a Vercel con el repositorio ya seleccionado y te pedirá
+directamente los tres valores de entorno (`NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_WORKSPACE_SLUG`, este último ya
+viene con el valor `tls` sugerido) — solo tienes que iniciar sesión con
+GitHub, pegar las dos claves de Supabase del paso 3 y darle a Deploy.
+
+**Opción manual**, si prefieres hacerlo paso a paso tú mismo:
+
+1. Entra en [vercel.com/new](https://vercel.com/new) e importa el
+   repositorio `TLS-ORGANIZACI-N`.
+2. En **Environment Variables**, añade las mismas tres variables del punto 4.
+3. Deploy. Vercel detecta Next.js automáticamente (no requiere configuración
    adicional).
-5. Comparte la URL de Vercel con tu equipo — es el "enlace" que pide el
-   punto 6 del encargo.
+
+Al terminar, comparte la URL de Vercel con tu equipo — es el "enlace" que
+pide el punto 6 del encargo.
 
 ## 6. Funcionalidades
 
