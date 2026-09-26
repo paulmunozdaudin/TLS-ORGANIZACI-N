@@ -157,8 +157,40 @@ pide el punto 6 del encargo.
 - **Colaboración en tiempo real**: todos los cambios se guardan en Supabase
   y se propagan a través de Realtime; además se ve cuántas personas están
   conectadas en ese momento.
+- **Finanzas** (`/finanzas`, protegida con PIN): balance total de la company,
+  ingresos y gastos totales, balance mensual de los últimos 6 meses y gastos
+  por categoría, además de la lista de movimientos con opción de añadir o
+  eliminar. Ver el punto 8 para configurarla.
 
-## 7. Verificación realizada
+## 8. Cómo activar la sección de Finanzas
+
+Este módulo no viene activado por el `schema.sql` original — necesita un
+paso extra porque, a diferencia del resto de la app, esta sección es más
+sensible (dinero) y está protegida con un PIN compartido:
+
+1. En el **SQL Editor** de tu proyecto de Supabase, pega y ejecuta el
+   contenido completo de [`supabase/finance_schema.sql`](./supabase/finance_schema.sql).
+   (Si vas a crear el proyecto desde cero, no hace falta este paso aparte:
+   ya está incluido al final de `supabase/schema.sql`.)
+2. El PIN por defecto es **`0000`**. Cámbialo enseguida ejecutando en el
+   mismo SQL Editor (sustituye `TU_PIN_NUEVO` por el PIN que quieras):
+   ```sql
+   select set_finance_pin('tls', '0000', 'TU_PIN_NUEVO');
+   ```
+3. Entra a la app y pulsa el botón **"Finanzas"** de la cabecera (o ve
+   directamente a `/finanzas`). Te pedirá el PIN antes de mostrar nada.
+
+**Sobre la seguridad de esta sección:** a diferencia de las demás tablas
+(abiertas a cualquiera con el enlace), las tablas de finanzas tienen RLS
+activado sin ninguna política de acceso directo — ni siquiera con la clave
+pública "anon" de la app se pueden leer o escribir por la API de Supabase.
+El único acceso es a través de un conjunto de funciones en la base de
+datos que comprueban el PIN en el servidor antes de devolver o modificar
+nada. Aun así, es un PIN compartido sencillo (no una contraseña por
+persona), pensado para un equipo de confianza, no para proteger datos
+altamente sensibles frente a un atacante decidido.
+
+## 9. Verificación realizada
 
 Este entorno de desarrollo no tiene forma de crear un proyecto de Supabase
 real (no hay credenciales ni acceso a la API de gestión de Supabase), así
@@ -172,6 +204,9 @@ que la verificación se ha hecho en dos niveles:
       reunión) y de la pantalla de "¿Cómo te llamas?".
 - [x] El aviso de "Falta configurar Supabase" se muestra correctamente
       cuando no hay variables de entorno.
+- [x] Revisión visual de la sección de Finanzas (balance, gráfico mensual,
+      gastos por categoría, lista de movimientos) con datos de prueba, en
+      escritorio y en móvil.
 
 Lo que **falta verificar con tu propio proyecto de Supabase** (siguiendo los
 pasos del punto 3), porque requiere una base de datos real:
@@ -183,6 +218,9 @@ pasos del punto 3), porque requiere una base de datos real:
       comprobar que los cambios de una se reflejan en la otra en tiempo real
       (agenda, tareas, ideas, actas, actividad y miembros conectados).
 - [ ] Comentarios y votaciones dentro de un tema de agenda.
+- [ ] Sección de Finanzas: introducir el PIN, añadir/eliminar movimientos y
+      comprobar que el balance, el gráfico mensual y el desglose por
+      categoría se actualizan correctamente.
 
 Todo el código de estas funciones sigue el mismo patrón ya usado en el resto
 de la app (Supabase client + `useRealtimeList`/suscripciones dedicadas), así
