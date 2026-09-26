@@ -198,11 +198,11 @@ export default function AgendaItemDetailModal({
               {item.description}
             </p>
           )}
-          <p className="mt-3 flex items-center gap-2 text-xs text-slate-400">
+          <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
             <Avatar name={item.added_by} size={20} />
             Añadido por <span className="font-medium text-slate-500">{item.added_by}</span> ·{" "}
             {formatRelativeTime(item.created_at)}
-          </p>
+          </div>
         </div>
 
         <div className="border-t border-slate-100 pt-5">

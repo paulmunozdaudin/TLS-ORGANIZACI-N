@@ -1,6 +1,7 @@
 "use client";
 
-import { Search, Sparkles, Users } from "lucide-react";
+import Link from "next/link";
+import { Search, Sparkles, Users, Wallet } from "lucide-react";
 import Avatar from "@/components/ui/Avatar";
 import type { NextMeeting } from "@/lib/types";
 import { formatMeetingDate } from "@/lib/date";
@@ -44,6 +45,13 @@ export default function Header({
           )}
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/finanzas"
+              className="flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800"
+            >
+              <Wallet className="h-3.5 w-3.5" />
+              Finanzas
+            </Link>
             {onlineUsers.length > 0 && (
               <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 py-1 pl-1.5 pr-3 ring-1 ring-emerald-200">
                 <div className="flex -space-x-1.5">

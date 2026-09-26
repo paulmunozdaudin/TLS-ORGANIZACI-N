@@ -125,3 +125,22 @@ export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
 };
 
 export const TASK_COLUMNS: TaskStatus[] = ["pendiente", "en_proceso", "completada"];
+
+export type FinanceType = "ingreso" | "gasto";
+
+export interface FinanceEntry {
+  id: string;
+  workspace_id: string;
+  type: FinanceType;
+  concept: string;
+  amount: number;
+  category: string | null;
+  entry_date: string;
+  added_by: string;
+  created_at: string;
+}
+
+export const FINANCE_TYPE_LABEL: Record<FinanceType, string> = {
+  ingreso: "Ingreso",
+  gasto: "Gasto",
+};
