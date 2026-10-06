@@ -32,7 +32,7 @@ export default function WaitlistForm() {
             aria-pressed={interest === option}
             className={`rounded-full border px-4 py-1.5 text-sm transition ${
               interest === option
-                ? "border-crema bg-crema text-musgo"
+                ? "border-crema bg-crema text-tinta"
                 : "border-crema/30 text-crema/80 hover:border-crema/70"
             }`}
           >

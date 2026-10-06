@@ -1,284 +1,350 @@
-import { ArrowRight, Flame, Hammer, QrCode, Recycle, Users } from "lucide-react";
+import { ArrowDown, ArrowRight, QrCode } from "lucide-react";
 import TreeRings from "@/components/web/TreeRings";
 import WaitlistForm from "@/components/web/WaitlistForm";
+import Reveal from "@/components/web/Reveal";
+import TiltCard from "@/components/web/TiltCard";
+import RingScroll from "@/components/web/RingScroll";
+import SpeciesExplorer from "@/components/web/SpeciesExplorer";
 import { BRAND } from "@/lib/web/brand";
+import { woodUrl } from "@/lib/web/wood";
 
 const NAV = [
-  { href: "#origen", label: "Origen" },
-  { href: "#piezas", label: "Piezas" },
-  { href: "#talleres", label: "Talleres" },
-  { href: "#coleccion", label: "Colección" },
-  { href: "#taller", label: "Quiénes somos" },
+  { href: "#materia", label: "Materia" },
+  { href: "#lineas", label: "Colecciones" },
+  { href: "#pasaporte", label: "Pasaporte" },
+  { href: "#taller", label: "El taller" },
 ];
 
-const PROCESS = [
-  {
-    icon: Flame,
-    title: "Recuperamos",
-    text: "Restos de poda y limpieza forestal que alimentarían un incendio, madera de derribo controlado y bambú de cultivo certificado.",
-  },
-  {
-    icon: Recycle,
-    title: "Seleccionamos",
-    text: "Secamos y clasificamos cada lote. Lo que no llega a pieza se convierte en piezas menores, en material de taller o en compost.",
-  },
-  {
-    icon: Hammer,
-    title: "Transformamos",
-    text: "Mujeres artesanas formadas en nuestro taller diseñan, tornean, lijan y acaban cada pieza a mano.",
-  },
-  {
-    icon: QrCode,
-    title: "Documentamos",
-    text: "Cada pieza lleva su pasaporte: de dónde vino la madera, quién la trabajó y cuándo. Su historia viaja con ella.",
-  },
+const MARQUEE = [
+  "Madera recuperada",
+  "Hecho a mano",
+  "Pieza única",
+  "Tali",
+  "Bambú",
+  "Mukulungu",
+  "Taller de mujeres",
+  "Origen documentado",
 ];
 
 const LINES = [
   {
-    id: "piezas",
+    n: "I",
+    wood: "bambu",
+    light: false,
     label: "Accesorios",
-    title: "Joyería de madera recuperada",
+    title: "Joyería de madera",
     text: "Collares, pulseras y pendientes ligeros, de líneas limpias. Cada veta es distinta, así que cada pieza también.",
     meta: "Desde 25 €",
-    tone: "bg-papel",
   },
   {
-    id: "talleres",
+    n: "II",
+    wood: "tali",
+    light: false,
     label: "Experiencias",
-    title: "Talleres para crear tu pieza",
-    text: "Sesiones en grupo reducido para hacer tu propia joya o pequeño objeto: aprendes oficio, te llevas algo tuyo y conoces el taller.",
+    title: "Talleres de creación",
+    text: "Sesiones en grupo reducido para crear tu propia pieza: aprendes oficio, te llevas algo tuyo y conoces el taller por dentro.",
     meta: "Grupos de 6–8 personas",
-    tone: "bg-salvia/25",
   },
   {
-    id: "coleccion",
+    n: "III",
+    wood: "mukulungu",
+    light: true,
     label: "Colección Origen",
-    title: "Piezas de autor, numeradas",
-    text: "Objetos de diseño contemporáneo en series cortas: iluminación, objetos de escritorio y accesorios tecnológicos, con certificado de origen digital.",
+    title: "Piezas de autor",
+    text: "Iluminación, objetos de escritorio y accesorios tecnológicos en series cortas y numeradas, con certificado de origen digital.",
     meta: "Series de 30 unidades",
-    tone: "bg-miel/30",
   },
 ];
 
+const PASSPORT = [
+  ["Madera", "Mukulungu"],
+  ["Vida anterior", "Tarima de muelle"],
+  ["Recuperada", "Marzo 2026"],
+  ["Artesana", "Lucía M."],
+  ["Horas de taller", "14 h"],
+  ["Serie", "07 / 30"],
+];
+
 export default function WebHome() {
+  const dark = woodUrl("mukulungu");
+
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-20 border-b border-tinta/10 bg-crema/85 backdrop-blur">
-        <div className="web-container flex h-16 items-center justify-between">
+      <header className="fixed inset-x-0 top-0 z-40 text-crema mix-blend-difference">
+        <div className="web-container flex h-20 items-center justify-between">
           <a href="#" className="font-display text-2xl tracking-tight">
             {BRAND.name}
           </a>
-          <nav className="hidden gap-7 text-sm text-tinta/70 md:flex">
+          <nav className="hidden gap-9 text-sm md:flex">
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="transition hover:text-tinta">
+              <a key={item.href} href={item.href} className="opacity-70 transition hover:opacity-100">
                 {item.label}
               </a>
             ))}
           </nav>
-          <a href="#lista" className="web-btn-dark px-4 py-2">
+          <a href="#lista" className="rounded-full border border-crema/60 px-5 py-2 text-sm transition hover:bg-crema hover:text-tinta">
             Únete
           </a>
         </div>
       </header>
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="overflow-hidden">
-          <div className="web-container grid items-center gap-12 py-16 md:grid-cols-[1.1fr_1fr] md:py-24">
+        {/* Hero sobre mukulungu en penumbra */}
+        <section className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-tinta text-crema">
+          <div className="absolute inset-0 -z-10 bg-cover opacity-60" style={{ backgroundImage: dark }} />
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_50%,transparent_0%,rgb(20_14_10/0.7)_55%,rgb(12_9_7/0.95)_100%)]" />
+
+          <div className="web-container grid items-center gap-10 pb-16 pt-28 md:grid-cols-[1.15fr_1fr]">
             <div>
-              <p className="eyebrow">{BRAND.tagline}</p>
-              <h1 className="mt-5 font-display text-5xl leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-                Madera que iba a arder.
+              <p className="eyebrow text-miel">{BRAND.tagline}</p>
+              <h1 className="mt-6 font-display text-[clamp(3rem,8vw,7rem)] leading-[0.95] tracking-tight">
+                Madera que ya
                 <br />
-                <span className="italic text-corteza">Piezas que van a durar.</span>
+                tuvo{" "}
+                <span className="wood-text italic" style={{ backgroundImage: woodUrl("tali") }}>
+                  una vida.
+                </span>
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-relaxed text-tinta/70">
-                Rescatamos restos de poda, madera de derribo y bambú sostenible y los
-                convertimos en joyería y objetos de diseño, hechos a mano por mujeres
-                artesanas.
+              <p className="mt-8 max-w-md text-lg leading-relaxed text-crema/70">
+                Recuperamos tali, mukulungu y bambú y los convertimos en joyería y objetos de
+                diseño, hechos a mano por mujeres artesanas. Piezas para la siguiente vida.
               </p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <a href="#piezas" className="web-btn-dark">
-                  Ver las piezas <ArrowRight className="h-4 w-4" />
+              <div className="mt-10 flex flex-wrap gap-3">
+                <a href="#lineas" className="web-btn bg-crema text-tinta hover:bg-miel">
+                  Descubrir las piezas <ArrowRight className="h-4 w-4" />
                 </a>
-                <a href="#talleres" className="web-btn-light">
-                  Reservar un taller
+                <a href="#taller" className="web-btn border border-crema/30 text-crema hover:border-crema">
+                  Conocer el taller
                 </a>
               </div>
             </div>
-            <div className="relative mx-auto w-full max-w-md">
-              <TreeRings className="w-full text-madera" rings={18} />
-              <div className="absolute bottom-6 left-0 rounded-2xl bg-papel/95 px-5 py-4 shadow-lg shadow-corteza/10 sm:-left-6">
-                <p className="text-xs uppercase tracking-[0.18em] text-tinta/50">Pieza nº 07/30</p>
-                <p className="mt-1 font-display text-lg">Encina · Sierra de Gredos</p>
-              </div>
+
+            <div className="relative mx-auto w-[min(80vw,32rem)]">
+              <div className="ember absolute inset-[30%] rounded-full" />
+              <TreeRings draw rings={22} className="spin-slow relative w-full text-miel/80" />
             </div>
+          </div>
+
+          <a
+            href="#materia"
+            aria-label="Seguir bajando"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 text-crema/50 transition hover:text-crema"
+          >
+            <ArrowDown className="h-5 w-5 animate-bounce" />
+          </a>
+        </section>
+
+        {/* Cinta de chapa de bambú grabada */}
+        <div className="relative overflow-hidden border-y border-black/20 py-5" style={{ backgroundImage: woodUrl("bambu") }}>
+          <div className="oil-sheen absolute inset-0" />
+          <div className="marquee flex w-max gap-12 whitespace-nowrap">
+            {[...MARQUEE, ...MARQUEE].map((word, i) => (
+              <span key={i} className="engraved font-display text-2xl italic sm:text-3xl">
+                {word} <span className="ml-12 not-italic">✦</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Manifiesto */}
+        <section className="py-28 sm:py-36">
+          <div className="web-container">
+            <Reveal>
+              <p className="eyebrow">Manifiesto</p>
+              <p className="mt-8 max-w-5xl font-display text-[clamp(2rem,4.5vw,3.75rem)] leading-[1.12] tracking-tight">
+                Hay maderas que tardaron{" "}
+                <span className="wood-text italic" style={{ backgroundImage: woodUrl("tali") }}>
+                  un siglo
+                </span>{" "}
+                en crecer y acaban en un contenedor. Nosotras las rescatamos, las escuchamos y
+                les damos una forma que{" "}
+                <span className="wood-text italic" style={{ backgroundImage: woodUrl("mukulungu") }}>
+                  dure otro siglo más.
+                </span>
+              </p>
+            </Reveal>
           </div>
         </section>
 
-        {/* Origen */}
-        <section id="origen" className="scroll-mt-16 border-y border-tinta/10 bg-papel py-20">
+        <RingScroll />
+
+        {/* Materia */}
+        <section id="materia" className="scroll-mt-20 py-28">
           <div className="web-container">
-            <div className="max-w-2xl">
-              <p className="eyebrow">Economía circular</p>
-              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-                Del monte al taller, sin desperdiciar nada.
+            <Reveal className="mb-14 max-w-2xl">
+              <p className="eyebrow">Materia</p>
+              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-6xl">
+                Tres maderas. Ninguna igual.
               </h2>
-            </div>
-            <ol className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-tinta/10 bg-tinta/10 sm:grid-cols-2 lg:grid-cols-4">
-              {PROCESS.map((step, i) => (
-                <li key={step.title} className="flex flex-col gap-4 bg-papel p-7">
-                  <div className="flex items-center justify-between">
-                    <step.icon className="h-6 w-6 text-madera" strokeWidth={1.5} />
-                    <span className="font-display text-sm text-tinta/40">0{i + 1}</span>
-                  </div>
-                  <h3 className="font-display text-2xl">{step.title}</h3>
-                  <p className="text-sm leading-relaxed text-tinta/70">{step.text}</p>
-                </li>
-              ))}
-            </ol>
+            </Reveal>
+            <Reveal>
+              <SpeciesExplorer />
+            </Reveal>
           </div>
         </section>
 
-        {/* Líneas */}
-        <section className="py-20">
+        {/* Colecciones */}
+        <section id="lineas" className="scroll-mt-20 bg-papel py-28">
           <div className="web-container">
-            <p className="eyebrow">Lo que hacemos</p>
-            <h2 className="mt-4 max-w-2xl font-display text-4xl tracking-tight sm:text-5xl">
-              Tres formas de llevarte un trozo de bosque.
-            </h2>
-            <div className="mt-14 grid gap-5 lg:grid-cols-3">
-              {LINES.map((line) => (
-                <article
-                  key={line.id}
-                  id={line.id}
-                  className={`flex scroll-mt-20 flex-col rounded-3xl p-8 ${line.tone}`}
-                >
-                  <TreeRings className="mb-8 h-28 w-28 text-corteza/70" rings={9} />
-                  <p className="eyebrow">{line.label}</p>
-                  <h3 className="mt-3 font-display text-2xl leading-tight">{line.title}</h3>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-tinta/70">{line.text}</p>
-                  <p className="mt-8 border-t border-tinta/10 pt-4 text-sm font-medium">
-                    {line.meta}
-                  </p>
-                </article>
+            <Reveal className="max-w-2xl">
+              <p className="eyebrow">Colecciones</p>
+              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-6xl">
+                Tres formas de llevarte un trozo de historia.
+              </h2>
+            </Reveal>
+            <div className="mt-16 grid gap-6 lg:grid-cols-3">
+              {LINES.map((line, i) => (
+                <Reveal key={line.n} delay={i * 120}>
+                  <TiltCard className="overflow-hidden rounded-[1.75rem] bg-crema shadow-xl shadow-corteza/10">
+                    <div
+                      className="relative flex aspect-[4/3] items-end justify-between bg-cover p-7"
+                      style={{ backgroundImage: woodUrl(line.wood) }}
+                    >
+                      <div className="oil-sheen absolute inset-0" />
+                      <span className={`engraved relative font-display text-7xl ${line.light ? "engraved-light" : ""}`}>
+                        {line.n}
+                      </span>
+                      <span className={`engraved relative text-xs uppercase tracking-[0.2em] ${line.light ? "engraved-light" : ""}`}>
+                        {line.label}
+                      </span>
+                    </div>
+                    <div className="p-7">
+                      <h3 className="font-display text-3xl">{line.title}</h3>
+                      <p className="mt-4 text-sm leading-relaxed text-tinta/70">{line.text}</p>
+                      <p className="mt-8 flex items-center justify-between border-t border-tinta/10 pt-4 text-sm font-medium">
+                        {line.meta}
+                        <ArrowRight className="h-4 w-4 text-madera" />
+                      </p>
+                    </div>
+                  </TiltCard>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Pasaporte de pieza */}
-        <section className="bg-tinta py-20 text-crema">
-          <div className="web-container grid items-center gap-12 md:grid-cols-2">
-            <div>
+        {/* Pasaporte grabado en chapa de bambú */}
+        <section id="pasaporte" className="relative isolate scroll-mt-20 overflow-hidden bg-tinta py-28 text-crema">
+          <div className="absolute inset-0 -z-10 bg-cover opacity-25" style={{ backgroundImage: dark }} />
+          <div className="web-container grid items-center gap-16 md:grid-cols-2">
+            <Reveal>
               <p className="eyebrow text-miel">Trazabilidad</p>
-              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
+              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-6xl">
                 Cada pieza tiene pasaporte.
               </h2>
-              <p className="mt-6 max-w-md leading-relaxed text-crema/70">
-                Escanea el código grabado en la pieza y descubre el árbol del que salió,
-                el motivo de su retirada, la artesana que la hizo y las horas de trabajo
-                que lleva dentro. En la Colección Origen, ese registro es además un
-                certificado digital verificable e intransferible.
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-crema/70">
+                Grabamos a láser un código en cada pieza. Al escanearlo descubres qué madera
+                es, qué vida tuvo antes, quién la trabajó y cuántas horas lleva dentro. En la
+                Colección Origen es además un certificado digital verificable e intransferible.
               </p>
-            </div>
-            <div className="mx-auto w-full max-w-sm rounded-3xl bg-papel p-7 text-tinta shadow-2xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-tinta/50">
-                    Pasaporte de pieza
-                  </p>
-                  <p className="mt-1 font-display text-2xl">Lámpara Brasa</p>
-                </div>
-                <QrCode className="h-10 w-10 text-tinta/80" strokeWidth={1.25} />
-              </div>
-              <dl className="mt-6 divide-y divide-tinta/10 text-sm">
-                {[
-                  ["Madera", "Encina (Quercus ilex)"],
-                  ["Origen", "Poda preventiva · Ávila"],
-                  ["Recuperada", "Marzo 2026"],
-                  ["Artesana", "Lucía M."],
-                  ["Horas de taller", "14 h"],
-                  ["Serie", "07 de 30"],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-tinta/50">{k}</dt>
-                    <dd className="text-right font-medium">{v}</dd>
+            </Reveal>
+            <Reveal delay={150}>
+              <TiltCard
+                className="mx-auto w-full max-w-sm overflow-hidden rounded-[1.5rem] bg-cover p-8 shadow-2xl shadow-black/60"
+                style={{ backgroundImage: woodUrl("bambu") }}
+              >
+                <div className="oil-sheen absolute inset-0 rounded-[1.5rem]" />
+                <div className="relative">
+                  <div className="flex items-start justify-between">
+                    <div className="engraved">
+                      <p className="text-[0.65rem] uppercase tracking-[0.25em]">Pasaporte de pieza</p>
+                      <p className="mt-1 font-display text-3xl">Lámpara Brasa</p>
+                    </div>
+                    <QrCode className="engraved h-12 w-12" strokeWidth={1.25} />
                   </div>
-                ))}
-              </dl>
-              <p className="mt-5 text-xs text-tinta/40">Ejemplo ilustrativo</p>
-            </div>
+                  <dl className="engraved mt-8 text-sm">
+                    {PASSPORT.map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-4 border-b border-[rgb(60_35_15/0.25)] py-2.5">
+                        <dt className="opacity-70">{k}</dt>
+                        <dd className="text-right font-semibold">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="engraved mt-6 text-[0.65rem] uppercase tracking-[0.25em] opacity-70">
+                    Ejemplo ilustrativo
+                  </p>
+                </div>
+              </TiltCard>
+            </Reveal>
           </div>
         </section>
 
         {/* El taller */}
-        <section id="taller" className="scroll-mt-16 py-20">
-          <div className="web-container grid gap-12 md:grid-cols-[1fr_1.2fr]">
-            <div>
-              <p className="eyebrow">El taller</p>
-              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-                Un oficio, un sueldo, una comunidad.
-              </h2>
-            </div>
-            <div className="space-y-6 text-lg leading-relaxed text-tinta/75">
-              <p>
-                Nuestro taller está pensado para mujeres: formamos en carpintería fina y
-                joyería en madera, y quienes completan la formación pueden incorporarse al
-                equipo de producción con un empleo digno.
-              </p>
-              <p>
-                No hacemos artesanía rústica. Trabajamos diseño contemporáneo con
-                materiales naturales, con acabados cuidados y piezas pensadas para durar
-                décadas.
-              </p>
-              <div className="grid gap-4 pt-4 sm:grid-cols-3">
-                {[
-                  { icon: Users, label: "Formación y empleo para mujeres" },
-                  { icon: Recycle, label: "Material 100 % recuperado o certificado" },
-                  { icon: QrCode, label: "Origen documentado pieza a pieza" },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-tinta/10 p-5">
-                    <item.icon className="h-5 w-5 text-madera" strokeWidth={1.5} />
-                    <p className="mt-3 text-sm leading-snug">{item.label}</p>
-                  </div>
-                ))}
+        <section id="taller" className="scroll-mt-20 py-28">
+          <div className="web-container">
+            <Reveal className="grid gap-12 md:grid-cols-[1fr_1.2fr]">
+              <div>
+                <p className="eyebrow">El taller</p>
+                <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-6xl">
+                  Un oficio, un sueldo, una comunidad.
+                </h2>
               </div>
+              <div className="space-y-6 text-lg leading-relaxed text-tinta/75">
+                <p>
+                  Nuestro taller está pensado para mujeres: formamos en carpintería fina y
+                  joyería en madera, y quienes completan la formación pueden incorporarse al
+                  equipo de producción con un empleo digno.
+                </p>
+                <p>
+                  No hacemos artesanía rústica. Trabajamos diseño contemporáneo con
+                  materiales nobles, con acabados cuidados y piezas pensadas para durar
+                  décadas.
+                </p>
+              </div>
+            </Reveal>
+            <div className="mt-16 grid gap-px overflow-hidden rounded-[1.75rem] bg-tinta/10 sm:grid-cols-3">
+              {[
+                ["Mujeres", "formadas y contratadas en el taller"],
+                ["100 %", "madera recuperada o de cultivo certificado"],
+                ["1 a 1", "cada pieza con su origen documentado"],
+              ].map(([big, small], i) => (
+                <Reveal key={big} delay={i * 120} className="bg-crema p-8">
+                  <p className="font-display text-5xl tracking-tight">{big}</p>
+                  <p className="mt-3 text-sm text-tinta/60">{small}</p>
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Lista de espera */}
-        <section id="lista" className="scroll-mt-16 bg-musgo py-20 text-crema">
-          <div className="web-container grid items-center gap-10 md:grid-cols-2">
-            <div>
-              <h2 className="font-display text-4xl tracking-tight sm:text-5xl">
+        <section id="lista" className="relative isolate scroll-mt-20 overflow-hidden bg-tinta py-28 text-crema">
+          <div className="absolute inset-0 -z-10 bg-cover opacity-50" style={{ backgroundImage: dark }} />
+          <div className="ember absolute -right-32 top-1/2 -z-10 h-96 w-96 -translate-y-1/2 rounded-full" />
+          <div className="web-container grid items-center gap-12 md:grid-cols-2">
+            <Reveal>
+              <h2 className="font-display text-4xl tracking-tight sm:text-6xl">
                 Estamos abriendo el taller.
               </h2>
-              <p className="mt-5 max-w-md leading-relaxed text-crema/70">
-                Apúntate y te avisamos de la primera colección, las fechas de los talleres
-                y las plazas de formación.
+              <p className="mt-5 max-w-md text-lg leading-relaxed text-crema/70">
+                Apúntate y te avisamos de la primera colección, las fechas de los talleres y
+                las plazas de formación.
               </p>
-            </div>
-            <WaitlistForm />
+            </Reveal>
+            <Reveal delay={150}>
+              <WaitlistForm />
+            </Reveal>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-tinta/10 py-10">
-        <div className="web-container flex flex-col justify-between gap-4 text-sm text-tinta/60 sm:flex-row">
-          <p>
-            <span className="font-display text-base text-tinta">{BRAND.name}</span> ·{" "}
-            {BRAND.tagline}
+      {/* Pie: el nombre grabado en una tabla de tali */}
+      <footer className="relative overflow-hidden bg-cover" style={{ backgroundImage: woodUrl("tali") }}>
+        <div className="oil-sheen absolute inset-0" />
+        <div className="web-container relative py-14">
+          <p className="engraved font-display text-[clamp(4rem,16vw,13rem)] leading-none tracking-tight">
+            {BRAND.name}
           </p>
-          <div className="flex gap-6">
-            <a href={`mailto:${BRAND.email}`} className="hover:text-tinta">
-              {BRAND.email}
-            </a>
-            <a href={BRAND.instagram} className="hover:text-tinta">
-              Instagram
-            </a>
+          <div className="engraved mt-8 flex flex-col justify-between gap-4 text-sm sm:flex-row">
+            <p>{BRAND.tagline}</p>
+            <div className="flex gap-6">
+              <a href={`mailto:${BRAND.email}`} className="hover:underline">
+                {BRAND.email}
+              </a>
+              <a href={BRAND.instagram} className="hover:underline">
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
       </footer>

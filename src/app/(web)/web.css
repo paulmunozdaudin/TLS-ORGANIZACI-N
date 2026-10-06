@@ -42,3 +42,133 @@ body {
 @utility web-btn-light {
   @apply web-btn border border-tinta/20 text-tinta hover:border-tinta/60;
 }
+
+/* ---------- Efectos de madera ---------- */
+
+/* Grano de papel/madera sobre toda la página, para darle tacto. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Texto relleno con veta de madera. */
+.wood-text {
+  background-size: 600px 600px;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Texto grabado a láser sobre madera: quemado y hundido. */
+.engraved {
+  color: rgb(36 20 10 / 0.82);
+  text-shadow:
+    0 1px 0 rgb(255 230 190 / 0.35),
+    0 -1px 0 rgb(0 0 0 / 0.25);
+  mix-blend-mode: multiply;
+}
+.engraved-light {
+  color: rgb(240 200 150 / 0.75);
+  text-shadow: 0 0 12px rgb(255 140 50 / 0.25);
+  mix-blend-mode: normal;
+}
+
+/* Brillo de madera aceitada. */
+.oil-sheen {
+  background:
+    linear-gradient(115deg, transparent 30%, rgb(255 245 225 / 0.18) 45%, transparent 60%),
+    radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.12), transparent 60%),
+    linear-gradient(to bottom, transparent 60%, rgb(0 0 0 / 0.25));
+  pointer-events: none;
+}
+
+/* Brasa: el corazón del hero respira como un rescoldo. */
+.ember {
+  background: radial-gradient(circle, rgb(255 150 60 / 0.55), rgb(200 80 20 / 0.18) 40%, transparent 70%);
+  filter: blur(20px);
+  animation: ember 5s ease-in-out infinite;
+}
+@keyframes ember {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
+
+/* Anillos que se dibujan desde el centro. */
+.ring-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ring-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+@keyframes ring-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.spin-slow {
+  animation: spin 140s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Cinta de chapa de madera que se desplaza. */
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.fade-swap {
+  animation: fade-swap 0.6s ease both;
+}
+@keyframes fade-swap {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.tilt {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(500px circle at var(--mx) var(--my), rgb(255 240 210 / 0.22), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.tilt:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-draw { animation: none; stroke-dashoffset: 0; }
+  .spin-slow, .marquee, .ember, .fade-swap { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .tilt { transform: none; }
+  html { scroll-behavior: auto; }
+}

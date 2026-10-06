@@ -2,8 +2,8 @@
 // Las ondulaciones son deterministas (sin aleatoriedad) para que el HTML
 // del servidor y el del cliente coincidan.
 
-function ringPath(radius: number, seed: number, cx: number, cy: number) {
-  const steps = 96;
+export function ringPath(radius: number, seed: number, cx: number, cy: number) {
+  const steps = 120;
   const points: string[] = [];
   for (let i = 0; i <= steps; i++) {
     const a = (i / steps) * Math.PI * 2;
@@ -19,12 +19,20 @@ function ringPath(radius: number, seed: number, cx: number, cy: number) {
   return points.join(" ") + " Z";
 }
 
+// Radio del anillo i de n: más juntos hacia fuera, como en un tronco real.
+export function ringRadius(i: number, n: number, max: number) {
+  return max * Math.pow((i + 1) / n, 0.8);
+}
+
 export default function TreeRings({
   rings = 14,
   className,
+  draw = false,
 }: {
   rings?: number;
   className?: string;
+  /** Anima el trazado de los anillos desde el centro hacia fuera. */
+  draw?: boolean;
 }) {
   const size = 400;
   const c = size / 2;
@@ -33,17 +41,18 @@ export default function TreeRings({
   return (
     <svg viewBox={`0 0 ${size} ${size}`} className={className} aria-hidden="true">
       {Array.from({ length: rings }, (_, i) => {
-        // Anillos más juntos hacia fuera, como en un tronco real.
         const t = (i + 1) / rings;
-        const radius = max * Math.pow(t, 0.8);
         return (
           <path
             key={i}
-            d={ringPath(radius, i * 1.3, c, c)}
+            d={ringPath(ringRadius(i, rings, max), i * 1.3, c, c)}
             fill="none"
             stroke="currentColor"
             strokeWidth={i % 4 === 3 ? 1.6 : 0.8}
             opacity={0.35 + t * 0.5}
+            pathLength={1}
+            className={draw ? "ring-draw" : undefined}
+            style={draw ? { animationDelay: `${0.2 + i * 0.09}s` } : undefined}
           />
         );
       })}
