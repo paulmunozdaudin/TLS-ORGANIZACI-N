@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-crema: #f5efe6;
+  --color-papel: #fbf8f3;
+  --color-tinta: #1d1915;
+  --color-corteza: #5b4330;
+  --color-madera: #a0703f;
+  --color-miel: #d9a566;
+  --color-musgo: #2f3a2b;
+  --color-salvia: #8a9a7b;
+  --font-sans: var(--font-web-sans);
+  --font-display: var(--font-web-display);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-crema);
+  color: var(--color-tinta);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@utility web-container {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility eyebrow {
+  @apply text-xs font-medium tracking-[0.2em] text-madera uppercase;
+}
+
+@utility web-btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition;
+}
+
+@utility web-btn-dark {
+  @apply web-btn bg-tinta text-crema hover:bg-corteza;
+}
+
+@utility web-btn-light {
+  @apply web-btn border border-tinta/20 text-tinta hover:border-tinta/60;
+}
