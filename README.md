@@ -227,3 +227,10 @@ de la app (Supabase client + `useRealtimeList`/suscripciones dedicadas), así
 que debería funcionar igual, pero no se ha podido confirmar end-to-end sin
 una base de datos real. Si al probarlo encuentras algo que no funciona como
 se describe, dímelo y lo reviso.
+
+## Web pública de la marca (`/web`)
+
+La web de la marca vive en `src/app/(web)/` con su propio layout raíz, así que
+no pasa por la pantalla de nombre de la herramienta interna y se renderiza
+estática (buena para SEO). El nombre, el correo y las redes están en
+`src/lib/web/brand.ts`. La herramienta interna sigue en `src/app/(app)/`.
