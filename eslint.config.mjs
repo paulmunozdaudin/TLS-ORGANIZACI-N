@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Focus es un proyecto Vite independiente con su propia configuración.
+    "focus/**",
   ]),
 ]);
 
