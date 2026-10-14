@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/*
+ * Tokens de diseño. Cambia aquí los colores y tamaños y se actualizan en
+ * toda la web. Las clases de Tailwind usan estos nombres: bg-bg, text-ink,
+ * bg-accent, text-step-head…
+ */
+:root {
+  --bg: #f7f5ef;          /* crema casi blanco */
+  --surface: #eeebe2;     /* un paso más oscuro */
+  --surface-2: #e4e0d4;
+  --ink: #1d1b17;         /* negro cálido */
+  --muted: #5d594f;
+  --night: #1d1b17;       /* fondo de la sección oscura */
+  --night-row: #2a2823;
+  --night-muted: #a9a496;
+  --accent: #3f4a26;      /* verde oliva oscuro */
+  --accent-strong: #2f381c;
+  --accent-soft: #d9dcc8;
+  --on-accent: #f7f5ef;
+  --danger: #8a2d1c;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-night: var(--night);
+  --color-night-row: var(--night-row);
+  --color-night-muted: var(--night-muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-albert), ui-sans-serif, system-ui, sans-serif;
+
+  /* Cinco tallas para toda la página. */
+  --text-step-small: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --text-step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --text-step-head: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --text-step-display: clamp(2.75rem, 1.5rem + 5.4vw, 6.25rem);
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-step-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent); color: var(--on-accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.display {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Botón principal: plano, esquinas rectas, un solo relleno. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0 1.5rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 500;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+}
+.button:active { transform: scale(0.98); }
+.button:disabled { cursor: progress; }
+@media (hover: hover) and (pointer: fine) {
+  .button:hover { background: var(--accent-strong); }
+}
+
+.link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 0.07em;
+  transition: text-decoration-color var(--t-hover) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link:hover { text-decoration-color: currentColor; }
+}
+
+/* ---------- Movimiento ---------- */
+
+/* Titular: cada línea sube desde detrás de su propia línea base. */
+.lines .line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.lines [data-line] { display: block; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .lines [data-line] {
+    transform: translateY(105%);
+    animation: line-up 900ms var(--ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 110ms + 150ms);
+  }
+  .js [data-rise] {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: rise 800ms var(--ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 450ms);
+  }
+
+  /* Aparición al hacer scroll, escalonada con --i. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 700ms var(--ease-out) calc(var(--i, 0) * 75ms),
+      transform 900ms var(--ease-out) calc(var(--i, 0) * 75ms);
+  }
+  .js [data-reveal].is-in { opacity: 1; transform: none; }
+
+  /* El móvil de la portada se desplaza un poco con el scroll. */
+  @supports (animation-timeline: view()) {
+    .drift {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+
+  .swap { animation: swap 420ms var(--ease-out); }
+}
+
+@keyframes line-up { to { transform: none; } }
+@keyframes rise { to { opacity: 1; transform: none; } }
+@keyframes drift { from { transform: translateY(3%); } to { transform: translateY(-3%); } }
+@keyframes swap { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

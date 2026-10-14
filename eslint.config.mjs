@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // La landing de lista de espera es un proyecto aparte con su propio lint.
+    "waitlist/**",
   ]),
 ]);
 
