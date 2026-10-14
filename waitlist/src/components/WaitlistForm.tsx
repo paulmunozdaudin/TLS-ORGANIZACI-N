@@ -11,7 +11,17 @@ import {
 } from "react";
 import { joinWaitlist } from "@/app/actions";
 import { form } from "@/content/landing";
-import { CITIES, SEEKING, SKILLS, type Seeking, type Skill } from "@/content/options";
+import {
+  CITIES,
+  COUNTRIES,
+  COUNTRY_CODES,
+  SECTORS,
+  SEEKING,
+  SKILLS,
+  type Sector,
+  type Seeking,
+  type Skill,
+} from "@/content/options";
 import { validateJoin, type Field, type JoinState } from "@/lib/waitlist";
 import ChoiceGroup from "./ChoiceGroup";
 import SuccessPanel from "./SuccessPanel";
@@ -25,7 +35,7 @@ type Props = {
   className?: string;
 };
 
-const FIELD_ORDER: Field[] = ["email", "city", "skill", "seeking", "privacy"];
+const FIELD_ORDER: Field[] = ["email", "country", "city", "skill", "seeking", "privacy"];
 
 export default function WaitlistForm({ drivesPreview = false, note, className = "" }: Props) {
   const uid = useId();
@@ -36,7 +46,9 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
   );
 
   const [email, setEmail] = useState("");
+  const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
+  const [interests, setInterests] = useState<Sector[]>([]);
   const [skill, setSkill] = useState<Skill | "">("");
   const [seeking, setSeeking] = useState<Seeking | "">("");
   const [privacy, setPrivacy] = useState(false);
@@ -46,21 +58,27 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- marca de tiempo solo en el cliente
+    /* eslint-disable react-hooks/set-state-in-effect -- solo se conocen en el cliente */
     setStartedAt(Date.now());
+    // País por defecto según el idioma del navegador (es-MX -> MX).
+    const region = navigator.language.split("-")[1]?.toUpperCase();
+    if (region && COUNTRY_CODES.includes(region)) setCountry((c) => c || region);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   // El formulario de la portada comparte lo que se marca con el móvil.
   useEffect(() => {
-    if (drivesPreview) setDraft({ city, skill, seeking });
+    if (drivesPreview) setDraft({ country, city, skill, seeking, interests });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drivesPreview, city, skill, seeking]);
+  }, [drivesPreview, country, city, skill, seeking, interests]);
 
   // El formulario del cierre parte de lo ya marcado arriba.
   useEffect(() => {
     if (drivesPreview) return;
     /* eslint-disable react-hooks/set-state-in-effect -- copia puntual del borrador */
+    if (draft.country) setCountry(draft.country);
     if (draft.city && !city) setCity(draft.city);
+    if (draft.interests.length && !interests.length) setInterests(draft.interests);
     if (draft.skill && !skill) setSkill(draft.skill);
     if (draft.seeking && !seeking) setSeeking(draft.seeking);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -97,7 +115,7 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
   }
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    const errs = validateJoin({ email: email.trim(), city, skill, seeking, privacy });
+    const errs = validateJoin({ email: email.trim(), country, city, skill, seeking, interests, privacy });
     if (Object.keys(errs).length > 0) {
       e.preventDefault();
       setErrors(errs);
@@ -119,10 +137,10 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
       action={formAction}
       onSubmit={onSubmit}
       noValidate
-      className={`grid gap-5 ${className}`}
+      className={`@container grid gap-4 ${className}`}
       aria-describedby={message ? id("status") : undefined}
     >
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 @md:grid-cols-2 @xl:grid-cols-[1.4fr_1fr_1fr]">
         <TextField
           id={id("email")}
           name="email"
@@ -137,6 +155,30 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
           errorId={errId("email")}
           field="email"
         />
+        <div className="grid content-start gap-2">
+          <label htmlFor={id("country")} className="text-step-small font-medium text-ink">
+            {form.country.label}
+          </label>
+          <select
+            id={id("country")}
+            name="country"
+            data-field="country"
+            autoComplete="country"
+            value={country}
+            onChange={(e) => { setCountry(e.target.value); clear("country"); }}
+            aria-invalid={errors.country ? true : undefined}
+            aria-describedby={errId("country")}
+            className={`h-13 w-full cursor-pointer border bg-surface px-3 text-ink outline-none transition-colors duration-200 focus:border-accent focus:bg-bg ${
+              errors.country ? "border-danger" : "border-transparent hover:border-ink/25"
+            } ${country ? "" : "text-muted"}`}
+          >
+            <option value="">{form.country.placeholder}</option>
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>{c.name}</option>
+            ))}
+          </select>
+          {errors.country && <ErrorText id={errId("country")!}>{form.errors.country}</ErrorText>}
+        </div>
         <TextField
           id={id("city")}
           name="city"
@@ -175,6 +217,15 @@ export default function WaitlistForm({ drivesPreview = false, note, className = 
         error={errors.seeking ? form.errors.seeking : undefined}
         errorId={errId("seeking")}
         field="seeking"
+      />
+
+      <ChoiceGroup
+        multiple
+        name="interests"
+        legend={form.interests}
+        options={SECTORS}
+        value={interests}
+        onChange={(v) => setInterests(v as Sector[])}
       />
 
       {/* Honeypot: invisible para personas, tentador para bots. */}

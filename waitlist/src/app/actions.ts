@@ -40,6 +40,7 @@ export async function joinWaitlist(
 ): Promise<JoinState> {
   const values = {
     email: String(formData.get("email") ?? "").trim().toLowerCase(),
+    country: String(formData.get("country") ?? "").toUpperCase(),
     city: String(formData.get("city") ?? ""),
     skill: String(formData.get("skill") ?? ""),
     seeking: String(formData.get("seeking") ?? ""),
@@ -53,10 +54,12 @@ export async function joinWaitlist(
     return { status: "error", message: form.errors.generic, values };
   }
 
-  const fieldErrors = validateJoin({
+  const input = {
     ...values,
+    interests: formData.getAll("interests").map(String),
     privacy: formData.get("privacy") === "on",
-  });
+  };
+  const fieldErrors = validateJoin(input);
   if (Object.keys(fieldErrors).length > 0) {
     return { status: "error", message: form.errors.summary, fieldErrors, values };
   }
@@ -101,9 +104,11 @@ export async function joinWaitlist(
   for (let attempt = 0; attempt < 3; attempt++) {
     const { error } = await supabase.from("waitlist").insert({
       email: values.email,
+      country: values.country,
       city: normalizeCity(values.city),
       skill: values.skill,
       seeking: values.seeking,
+      interests: [...new Set(input.interests)],
       referral_code: code,
       referred_by: referredBy,
       privacy_accepted_at: new Date().toISOString(),

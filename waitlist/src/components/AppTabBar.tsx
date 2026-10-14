@@ -1,4 +1,4 @@
-const TABS = ["Personas", "Ideas", "Comunidades"] as const;
+const TABS = ["Descubrir", "Matches", "Comunidades"] as const;
 
 /** Barra inferior de la app dentro de los mockups. */
 export default function AppTabBar({ active }: { active: (typeof TABS)[number] }) {

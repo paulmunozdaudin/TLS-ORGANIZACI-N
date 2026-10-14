@@ -16,6 +16,14 @@ create table if not exists public.waitlist (
   created_at timestamptz not null default now()
 );
 
+-- País (código ISO de dos letras). Se añade aparte para poder ejecutar este
+-- archivo sobre una tabla creada con una versión anterior.
+alter table public.waitlist add column if not exists country text check (country ~ '^[A-Z]{2}$');
+
+-- Sectores que le interesan (opcional).
+alter table public.waitlist add column if not exists interests text[] not null default '{}'
+  check (interests <@ array['ia', 'ecommerce', 'marketing', 'moda', 'fintech', 'contenido', 'comida', 'sostenibilidad']);
+
 create unique index if not exists waitlist_email_unique on public.waitlist (lower(email));
 create index if not exists waitlist_referred_by_idx on public.waitlist (referred_by);
 create index if not exists waitlist_ip_recent_idx on public.waitlist (ip_hash, created_at);
@@ -54,12 +62,20 @@ $$;
 revoke all on function public.waitlist_position(text, integer) from public, anon, authenticated;
 grant execute on function public.waitlist_position(text, integer) to service_role;
 
--- Demanda por ciudad y por perfil (consúltalas en el SQL Editor o en Table Editor).
-create or replace view public.waitlist_by_city
+-- Demanda por país, ciudad y perfil (consúltalas en el SQL Editor o en Table Editor).
+create or replace view public.waitlist_by_country
 with (security_invoker = true) as
-select initcap(trim(city)) as city, count(*) as people
+select country, count(*) as people
 from public.waitlist
-group by 1
+group by country
+order by people desc;
+
+drop view if exists public.waitlist_by_city;
+create view public.waitlist_by_city
+with (security_invoker = true) as
+select country, initcap(trim(city)) as city, count(*) as people
+from public.waitlist
+group by 1, 2
 order by people desc;
 
 create or replace view public.waitlist_by_profile
@@ -67,4 +83,11 @@ with (security_invoker = true) as
 select skill, seeking, count(*) as people
 from public.waitlist
 group by skill, seeking
+order by people desc;
+
+create or replace view public.waitlist_by_interest
+with (security_invoker = true) as
+select interest, count(*) as people
+from public.waitlist, unnest(interests) as interest
+group by interest
 order by people desc;

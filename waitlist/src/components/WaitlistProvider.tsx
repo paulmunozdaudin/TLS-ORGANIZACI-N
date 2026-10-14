@@ -8,10 +8,16 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Seeking, Skill } from "@/content/options";
+import type { Sector, Seeking, Skill } from "@/content/options";
 import { REFERRAL_RE, type JoinState } from "@/lib/waitlist";
 
-type Draft = { city: string; skill: Skill | ""; seeking: Seeking | "" };
+type Draft = {
+  country: string;
+  city: string;
+  skill: Skill | "";
+  seeking: Seeking | "";
+  interests: Sector[];
+};
 type Success = Extract<JoinState, { status: "success" }>;
 
 type WaitlistContextValue = {
@@ -30,7 +36,13 @@ const WaitlistContext = createContext<WaitlistContextValue | null>(null);
 const STORAGE_KEY = "waitlist:ref";
 
 export function WaitlistProvider({ children }: { children: ReactNode }) {
-  const [draft, setDraftState] = useState<Draft>({ city: "", skill: "", seeking: "" });
+  const [draft, setDraftState] = useState<Draft>({
+    country: "",
+    city: "",
+    skill: "",
+    seeking: "",
+    interests: [],
+  });
   const [result, setResult] = useState<Success | null>(null);
   const [referral, setReferral] = useState("");
 
