@@ -25,7 +25,7 @@ export function ActivityBadge({ type, size = 44, active }: { type: ActivityType;
 }
 
 const STATUS: Record<CommitmentStatus, { label: string; fg: string; bg: string }> = {
-  active: { label: 'Activo', fg: colors.lime, bg: colors.limeSoft },
+  active: { label: 'En curso', fg: colors.lime, bg: colors.limeSoft },
   completed: { label: 'Cumplido', fg: colors.onLime, bg: colors.lime },
   failed: { label: 'Fallido', fg: colors.danger, bg: colors.dangerSoft },
   pending_verification: { label: 'En verificación', fg: colors.warning, bg: colors.warningSoft },
@@ -134,8 +134,8 @@ export function EmptyState({ title, body }: { title: string; body: string }) {
 }
 
 const styles = StyleSheet.create({
-  pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: radius.pill },
-  pillText: { fontSize: 11, fontWeight: '800', letterSpacing: 0.6, textTransform: 'uppercase' },
+  pill: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: radius.pill },
+  pillText: { fontSize: 12, fontWeight: '700' },
   tag: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   tagText: { fontSize: 12, fontWeight: '700' },
   section: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

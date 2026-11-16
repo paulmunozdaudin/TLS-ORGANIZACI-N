@@ -1,14 +1,13 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ActivityRow } from '@/components/cards/ActivityRow';
 import { ActivityBadge, EmptyState, SectionHeader, Stat } from '@/components/cards/common';
 import { CommitmentCard } from '@/components/cards/CommitmentCard';
-import { lastSevenDays, WeekChart } from '@/components/cards/WeekChart';
 import { Gecko } from '@/components/mascot/Gecko';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import { Screen } from '@/components/ui/Screen';
 import { T } from '@/components/ui/T';
 import { CHALLENGES } from '@/data/community';
@@ -20,21 +19,25 @@ import { useTodaySteps } from '@/hooks/useTodaySteps';
 import { useAppStore } from '@/store/useAppStore';
 import { colors, radius, space } from '@/theme/tokens';
 
-function greeting(now: number): string {
-  const h = new Date(now).getHours();
-  if (h < 6) return 'Buenas noches';
-  if (h < 13) return 'Buenos días';
-  if (h < 21) return 'Buenas tardes';
-  return 'Buenas noches';
-}
-
-const MOOD_LINE: Record<GeckoMood, { title: string; body: string }> = {
-  neutral: { title: '¿Qué te juegas hoy?', body: 'Ponle precio a tu palabra y sal a cumplirla.' },
-  motivated: { title: 'Tienes algo en juego.', body: 'Tu reto está activo. Sal y recupera lo tuyo.' },
-  happy: { title: '¡Reto cumplido!', body: 'Has recuperado tu dinero. Así se hace.' },
-  proud: { title: 'Estás en racha.', body: 'Días seguidos cumpliendo. No la rompas ahora.' },
-  disappointed: { title: 'Esta vez no salió.', body: 'El último reto se escapó. La revancha empieza hoy.' },
+const MOOD_LINE: Record<GeckoMood, string> = {
+  neutral: '¿Listo para un nuevo reto?',
+  motivated: 'Tienes dinero en juego. Sal a recuperarlo.',
+  happy: '¡Reto cumplido! Has recuperado tu dinero.',
+  proud: 'Estás en racha. No la rompas ahora.',
+  disappointed: 'Esta vez no salió. La revancha empieza hoy.',
 };
+
+const WEEK_MS = 7 * 86_400_000;
+
+function Tile({ icon, color, value, unit }: { icon: IconName; color: string; value: string; unit: string }) {
+  return (
+    <Card style={styles.tile}>
+      <Icon name={icon} size={26} color={color} />
+      <T variant="stat" numberOfLines={1} adjustsFontSizeToFit>{value}</T>
+      <T variant="caption">{unit}</T>
+    </Card>
+  );
+}
 
 export default function Home() {
   const now = useNow();
@@ -45,54 +48,42 @@ export default function Home() {
 
   const stats = computeStats(activities, commitments, now);
   const mood = geckoMood(activities, commitments, now);
-  const line = MOOD_LINE[mood];
-  const open = commitments.filter((c) => c.status === 'active' || c.status === 'pending_verification');
-  const today = activities.filter((a) => dayKey(a.startedAt) === dayKey(now) && a.verification.status === 'verified');
-  const todayKm = today.reduce((s, a) => s + a.verification.verifiedDistanceM, 0);
-  const todayKcal = today.reduce((s, a) => s + a.calories, 0);
-  const week = lastSevenDays(activities, now);
-  const weekM = week.reduce((s, d) => s + d.distanceM, 0);
-  const activeDays = week.filter((d) => d.distanceM > 0).length;
+  const open = commitments
+    .filter((c) => c.status === 'active' || c.status === 'pending_verification')
+    .sort((a, b) => a.deadline - b.deadline);
+
+  const verified = activities.filter((a) => a.verification.status === 'verified');
+  const today = verified.filter((a) => dayKey(a.startedAt) === dayKey(now));
+  const week = verified.filter((a) => now - a.startedAt < WEEK_MS);
+  const sum = (list: typeof verified, f: (a: (typeof verified)[number]) => number) => list.reduce((s, a) => s + f(a), 0);
 
   return (
     <Screen tabbed>
       <View style={styles.header}>
-        <View style={styles.flex}>
-          <T variant="caption">{greeting(now)},</T>
-          <T variant="title">{user?.name}</T>
-        </View>
-        <View style={styles.chip} accessibilityLabel={`Racha de ${stats.streak} días`}>
+        <T style={styles.wordmark}>GECKO</T>
+        <View style={styles.chip} accessible accessibilityLabel={`Racha de ${stats.streak} días`}>
           <Icon name="flame" size={16} color={stats.streak > 0 ? colors.lime : colors.textDim} />
           <T style={styles.chipText}>{stats.streak}</T>
         </View>
       </View>
 
-      <Card tone="high" style={styles.hero}>
-        <View style={styles.heroTop}>
+      <View>
+        <View style={styles.hero}>
           <View style={styles.heroText}>
+            <T variant="display">¡Hola, {user?.name}!</T>
+            <T style={styles.heroLine}>{MOOD_LINE[mood]}</T>
             <T variant="label" color={colors.lime}>Nivel {stats.level.level} · {stats.rank.name}</T>
-            <T variant="title">{line.title}</T>
-            <T variant="caption">{line.body}</T>
           </View>
-          <Gecko mood={mood} size={124} />
+          <View style={styles.heroGecko}>
+            <Gecko mood={mood} size={168} />
+          </View>
         </View>
         <Button label="Crear compromiso" icon="plus" onPress={() => router.push('/commitment/new')} />
-      </Card>
-
-      <View style={styles.section}>
-        <SectionHeader title="Hoy" />
-        <Card style={styles.row}>
-          <Stat label="Pasos" value={formatInt(steps)} />
-          <View style={styles.divider} />
-          <Stat label="Distancia" value={formatKm(todayKm)} unit="km" />
-          <View style={styles.divider} />
-          <Stat label="Calorías" value={formatInt(todayKcal)} unit="kcal" />
-        </Card>
       </View>
 
       <View style={styles.section}>
         <SectionHeader
-          title="Retos activos"
+          title={open.length > 1 ? 'Tus retos activos' : 'Tu reto activo'}
           action={open.length > 0 ? 'Ver todos' : undefined}
           onAction={() => router.push('/commitments')}
         />
@@ -105,13 +96,21 @@ export default function Home() {
 
       <View style={styles.section}>
         <SectionHeader title="Esta semana" />
-        <Card style={{ gap: space.lg }}>
-          <View style={styles.row}>
-            <Stat label="Distancia" value={formatKm(weekM, 1)} unit="km" />
-            <Stat label="Días activos" value={`${activeDays}/7`} />
-            <Stat label="A salvo" value={formatMoney(stats.savedCents)} />
-          </View>
-          <WeekChart activities={activities} now={now} />
+        <View style={styles.tiles}>
+          <Tile icon="run" color={colors.lime} value={formatKm(sum(week, (a) => a.verification.verifiedDistanceM), 1)} unit="km" />
+          <Tile icon="steps" color={colors.lime} value={formatInt(sum(week, (a) => a.steps ?? 0))} unit="pasos" />
+          <Tile icon="flame" color="#FF8A3D" value={formatInt(sum(week, (a) => a.calories))} unit="kcal" />
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Hoy" />
+        <Card style={styles.row}>
+          <Stat label="Pasos" value={formatInt(steps)} />
+          <View style={styles.divider} />
+          <Stat label="Distancia" value={formatKm(sum(today, (a) => a.verification.verifiedDistanceM))} unit="km" />
+          <View style={styles.divider} />
+          <Stat label="A salvo" value={formatMoney(stats.savedCents)} />
         </Card>
       </View>
 
@@ -134,14 +133,15 @@ export default function Home() {
 
       <View style={styles.section}>
         <SectionHeader title="Retos recomendados" />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.bleed}
-          contentContainerStyle={styles.carousel}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bleed} contentContainerStyle={styles.carousel}>
           {CHALLENGES.map((c) => (
-            <Card key={c.id} onPress={() => openChallenge(c)} style={styles.challenge} accessibilityLabel={`Reto ${c.title}`}>
+            <Pressable
+              key={c.id}
+              accessibilityRole="button"
+              accessibilityLabel={`Reto ${c.title}`}
+              onPress={() => openChallenge(c)}
+              style={({ pressed }) => [styles.challenge, pressed && { opacity: 0.8 }]}
+            >
               <ActivityBadge type={c.activityType} size={38} />
               <View style={{ gap: 2 }}>
                 <T variant="heading">{c.title}</T>
@@ -151,7 +151,7 @@ export default function Home() {
                 <T variant="stat" color={colors.lime}>{formatMoney(c.stakeCents)}</T>
                 <T variant="caption">{formatInt(c.participants)} dentro</T>
               </View>
-            </Card>
+            </Pressable>
           ))}
         </ScrollView>
       </View>
@@ -160,8 +160,8 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  wordmark: { fontSize: 26, fontWeight: '900', letterSpacing: 1.5 },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -174,14 +174,27 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   chipText: { fontWeight: '900', fontSize: 15, fontVariant: ['tabular-nums'] },
-  hero: { gap: space.lg },
-  heroTop: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  heroText: { flex: 1, gap: 6 },
+  hero: { flexDirection: 'row', alignItems: 'flex-end', minHeight: 172 },
+  heroText: { flex: 1, gap: 8, paddingBottom: space.xl },
+  heroLine: { fontSize: 17, lineHeight: 23, color: colors.textMuted },
+  // La mascota asoma por detrás del botón, como si se apoyara en él.
+  heroGecko: { marginBottom: -14, marginRight: -8 },
   section: { gap: space.md },
+  tiles: { flexDirection: 'row', gap: space.md },
+  tile: { flex: 1, alignItems: 'center', gap: 4, paddingHorizontal: space.sm },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.md },
   divider: { width: 1, height: 32, backgroundColor: colors.border },
   bleed: { marginHorizontal: -space.xl },
   carousel: { paddingHorizontal: space.xl, gap: space.md },
-  challenge: { width: 190, gap: space.md, justifyContent: 'space-between' },
+  challenge: {
+    width: 190,
+    gap: space.md,
+    justifyContent: 'space-between',
+    padding: space.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
   challengeFoot: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
 });

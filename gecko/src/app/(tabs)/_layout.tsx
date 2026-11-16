@@ -12,9 +12,9 @@ import { colors, TAB_BAR_HEIGHT } from '@/theme/tokens';
 
 const TABS: Record<string, { label: string; icon: IconName }> = {
   index: { label: 'Inicio', icon: 'home' },
-  community: { label: 'Comunidad', icon: 'users' },
+  community: { label: 'Explorar', icon: 'search' },
   start: { label: 'Empezar', icon: 'play' },
-  commitments: { label: 'Retos', icon: 'target' },
+  commitments: { label: 'Retos', icon: 'heart' },
   profile: { label: 'Perfil', icon: 'user' },
 };
 
@@ -46,7 +46,7 @@ function GeckoTabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
                 style={styles.item}
               >
                 <View style={[styles.startButton, recording && styles.startRecording]}>
-                  <Icon name={recording ? 'bolt' : 'play'} size={24} color={colors.onLime} filled />
+                  <Icon name={recording ? 'bolt' : 'run'} size={28} color={colors.onLime} strokeWidth={2.4} filled={recording} />
                 </View>
               </Pressable>
             );
@@ -98,23 +98,21 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 480,
     backgroundColor: colors.surface,
-    borderRadius: TAB_BAR_HEIGHT / 2,
+    borderRadius: 26,
     borderWidth: 1,
-    borderColor: colors.borderStrong,
+    borderColor: colors.border,
     paddingHorizontal: 6,
   },
   item: { flex: 1, height: '100%', alignItems: 'center', justifyContent: 'center', gap: 3 },
-  label: { fontSize: 10, fontWeight: '700', letterSpacing: 0.2 },
+  label: { fontSize: 11, fontWeight: '600' },
   startButton: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.lime,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -22,
-    borderWidth: 4,
-    borderColor: colors.bg,
+    marginTop: -6,
   },
   startRecording: { backgroundColor: colors.warning },
 });

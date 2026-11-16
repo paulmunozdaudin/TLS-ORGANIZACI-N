@@ -175,10 +175,9 @@ export function Gecko({ mood = 'neutral', size = 160, animated = true }: Props) 
 
         {/* cabeza */}
         <Ellipse cx={100} cy={88} rx={64} ry={48} fill={`url(#${gid}-skin)`} />
-        <Ellipse cx={100} cy={54} rx={26} ry={6} fill="#FFFFFF" opacity={0.22} />
-        <Circle cx={100} cy={70} r={4.5} fill={SKIN_DARK} opacity={0.55} />
-        <Circle cx={88} cy={79} r={3} fill={SKIN_DARK} opacity={0.55} />
-        <Circle cx={112} cy={79} r={3} fill={SKIN_DARK} opacity={0.55} />
+                {/* cinta deportiva con la G de Gecko */}
+        <Path d="M40 60 Q100 30 160 60 L158 74 Q100 46 42 74 Z" fill="#141614" />
+        <Path d="M105.5 52.5 A6 6 0 1 0 105.5 61.5 L105.5 57.5 L101 57.5" stroke="#C5F82A" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
         <Eye cx={58} mood={mood} side={1} />
         <Eye cx={142} mood={mood} side={-1} />

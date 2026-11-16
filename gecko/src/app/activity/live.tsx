@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ACTIVITY_ICON } from '@/components/cards/common';
 import { RouteMap } from '@/components/map/RouteMap';
 import { Button, tap } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
@@ -12,13 +13,13 @@ import { T } from '@/components/ui/T';
 import { commitmentProgress, MIN_SESSION_SEC } from '@/domain/commitments';
 import {
   ACTIVITY_LABEL,
-  commitmentTitle,
   formatDuration,
   formatGoalValue,
   formatInt,
   formatKm,
-  formatMoney,
+  formatMoneyFull,
   formatPace,
+  formatProgress,
   formatSpeedKmh,
 } from '@/domain/format';
 import { estimateCalories } from '@/domain/gamification';
@@ -30,11 +31,14 @@ import { colors, radius, space } from '@/theme/tokens';
 
 const isType = (v: unknown): v is ActivityType => v === 'run' || v === 'walk' || v === 'ride';
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <View style={styles.metric}>
-      <T variant="stat">{value}</T>
-      <T variant="label">{label}</T>
+      <View style={styles.metricValue}>
+        <T variant="stat">{value}</T>
+        {unit ? <T style={styles.metricUnit}>{unit}</T> : null}
+      </View>
+      <T variant="caption">{label}</T>
     </View>
   );
 }
@@ -45,6 +49,8 @@ export default function Live() {
   const now = useNow(1000);
   const t = useTracking();
   const [saving, setSaving] = useState(false);
+  // Finalizar pide confirmación: un toque accidental no debe cerrar una actividad con dinero en juego.
+  const [confirming, setConfirming] = useState(false);
 
   const saveActivity = useAppStore((s) => s.saveActivity);
   const activities = useAppStore((s) => s.activities);
@@ -111,7 +117,7 @@ export default function Live() {
       commitment.metric === 'distance' ? t.distanceM : commitment.metric === 'steps' ? t.steps ?? 0 : seconds >= MIN_SESSION_SEC ? 1 : 0;
     const total = done + live;
     goal = {
-      label: `${formatGoalValue(commitment.metric, Math.min(total, commitment.target))} de ${formatGoalValue(commitment.metric, commitment.target)}`,
+      label: formatProgress(commitment.metric, total, commitment.target),
       ratio: total / commitment.target,
     };
   }
@@ -124,74 +130,85 @@ export default function Live() {
   };
 
   const gpsWeak = t.gpsAccuracy != null && t.gpsAccuracy > 25;
+  const gpsColor = !t.hasFix || gpsWeak ? colors.warning : colors.lime;
 
   return (
     <View style={styles.root}>
       <View style={styles.map}>
         <RouteMap points={t.points} live />
-        <View style={[styles.topBar, { top: insets.top + space.sm }]}>
-          <View style={styles.badge}>
-            <View style={[styles.dot, { backgroundColor: !t.hasFix ? colors.warning : gpsWeak ? colors.warning : colors.lime }]} />
-            <T style={styles.badgeText}>
-              {!t.hasFix ? 'Buscando GPS…' : gpsWeak ? 'GPS débil' : 'GPS'}
-            </T>
+        <View style={[styles.topBar, { top: insets.top + space.sm }]} pointerEvents="none">
+          <View style={styles.titleRow}>
+            <Icon name={ACTIVITY_ICON[t.type]} size={22} color={colors.lime} />
+            <T variant="heading">{ACTIVITY_LABEL[t.type]}</T>
           </View>
-          <View style={styles.badge}>
-            <T style={styles.badgeText}>{ACTIVITY_LABEL[t.type]}</T>
-          </View>
+          {commitment ? (
+            <View style={styles.stakePill}>
+              <T style={styles.stakeText}>
+                {formatGoalValue(commitment.metric, commitment.target).toUpperCase()} · {formatMoneyFull(commitment.stakeCents)} comprometidos
+              </T>
+            </View>
+          ) : null}
+        </View>
+        <View style={[styles.gps, { top: insets.top + space.sm }]}>
+          <View style={[styles.dot, { backgroundColor: gpsColor }]} />
+          <T style={styles.gpsText}>{!t.hasFix ? 'Buscando GPS…' : gpsWeak ? 'GPS débil' : 'GPS'}</T>
         </View>
       </View>
 
       <View style={[styles.panel, { paddingBottom: insets.bottom + space.lg }]}>
+        <View style={styles.heroRow} accessible accessibilityLabel={`${formatKm(t.distanceM)} kilómetros`}>
+          <T variant="hero">{formatKm(t.distanceM)}</T>
+          <T style={styles.heroUnit}>KM</T>
+        </View>
         {t.status === 'paused' ? <T variant="label" color={colors.warning} center>En pausa</T> : null}
 
-        <View style={styles.heroBlock}>
-          <T variant="hero" accessibilityLabel={`${formatKm(t.distanceM)} kilómetros`}>{formatKm(t.distanceM)}</T>
-          <T variant="label">Kilómetros</T>
-        </View>
-
-        <View style={styles.metrics}>
-          <Metric label="Tiempo" value={formatDuration(seconds)} />
-          <Metric label={isRide ? 'Km/h' : 'Ritmo'} value={current} />
-          <Metric label={isRide ? 'Media' : 'Ritmo medio'} value={average} />
-        </View>
-        <View style={styles.metrics}>
-          <Metric label="Calorías" value={formatInt(estimateCalories(t.type, t.distanceM, weightKg))} />
-          <Metric label="Pasos" value={t.steps != null ? formatInt(t.steps) : '—'} />
-          <Metric label="Precisión" value={t.gpsAccuracy != null ? `±${Math.round(t.gpsAccuracy)} m` : '—'} />
+        <View style={styles.statsCard}>
+          <View style={styles.metrics}>
+            <Metric label="Tiempo" value={formatDuration(seconds)} />
+            <View style={styles.divider} />
+            <Metric label={isRide ? 'Km/h actual' : 'Ritmo actual'} value={current} unit={isRide ? undefined : '/KM'} />
+            <View style={styles.divider} />
+            <Metric label={isRide ? 'Km/h media' : 'Ritmo medio'} value={average} unit={isRide ? undefined : '/KM'} />
+          </View>
+          <View style={styles.subMetrics}>
+            <T variant="caption">{formatInt(estimateCalories(t.type, t.distanceM, weightKg))} kcal</T>
+            <T variant="caption">{t.steps != null ? `${formatInt(t.steps)} pasos` : 'Sin podómetro'}</T>
+            <T variant="caption">{t.gpsAccuracy != null ? `GPS ±${Math.round(t.gpsAccuracy)} m` : 'GPS —'}</T>
+          </View>
         </View>
 
         {commitment && goal ? (
           <View style={styles.goal}>
             <View style={styles.goalRow}>
-              <T variant="heading" numberOfLines={1} style={styles.flex}>{commitmentTitle(commitment)}</T>
-              <T variant="heading" color={colors.lime}>{formatMoney(commitment.stakeCents)}</T>
+              <T style={styles.goalLabel}>Progreso del reto</T>
+              <T style={styles.goalLabel}>{goal.label}</T>
             </View>
-            <ProgressBar ratio={goal.ratio} height={10} />
-            <T variant="caption">{goal.label}</T>
+            <ProgressBar ratio={goal.ratio} height={12} />
           </View>
         ) : null}
 
-        <View style={styles.controls}>
-          {t.status === 'running' ? (
+        {confirming ? (
+          <View style={styles.controls}>
+            <Button label="Seguir" variant="secondary" onPress={() => setConfirming(false)} disabled={saving} style={styles.flex} />
+            <Button label="Sí, finalizar" icon="flag" onPress={finish} loading={saving} style={styles.flex} />
+          </View>
+        ) : (
+          <View style={styles.controls}>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Pausar"
+              accessibilityLabel={t.status === 'running' ? 'Pausar' : 'Reanudar'}
               onPress={() => {
                 tap();
-                t.pause();
+                if (t.status === 'running') t.pause();
+                else t.resume();
               }}
               style={styles.pause}
             >
-              <Icon name="pause" size={30} color={colors.onLime} strokeWidth={3.5} />
+              <Icon name={t.status === 'running' ? 'pause' : 'play'} size={28} strokeWidth={3.2} filled={t.status !== 'running'} />
             </Pressable>
-          ) : (
-            <>
-              <Button label="Finalizar" variant="secondary" icon="stop" onPress={finish} loading={saving} style={styles.flex} />
-              <Button label="Reanudar" icon="play" onPress={t.resume} disabled={saving} style={styles.flex} />
-            </>
-          )}
-        </View>
+            <Button label="Finalizar" icon="flag" onPress={() => setConfirming(true)} style={styles.flex} />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -203,52 +220,62 @@ const styles = StyleSheet.create({
   stretch: { alignSelf: 'stretch', marginTop: space.lg },
   flex: { flex: 1 },
   map: { flex: 1, minHeight: 160 },
-  topBar: { position: 'absolute', left: space.lg, right: space.lg, flexDirection: 'row', justifyContent: 'space-between' },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    height: 32,
+  topBar: { position: 'absolute', left: 0, right: 0, alignItems: 'center', gap: space.sm },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  stakePill: {
+    paddingHorizontal: 16,
+    height: 34,
+    justifyContent: 'center',
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(10, 11, 10, 0.85)',
     borderWidth: 1,
-    borderColor: colors.borderStrong,
+    borderColor: colors.limeDeep,
+    backgroundColor: 'rgba(10, 11, 10, 0.85)',
   },
+  stakeText: { fontSize: 13, fontWeight: '700', color: colors.lime },
+  gps: { position: 'absolute', left: space.lg, flexDirection: 'row', alignItems: 'center', gap: 6, height: 26 },
+  gpsText: { fontSize: 11, fontWeight: '700', color: colors.textMuted },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  badgeText: { fontSize: 12, fontWeight: '800', letterSpacing: 0.4 },
   panel: {
     backgroundColor: colors.bg,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    marginTop: -radius.xl,
-    paddingTop: space.lg,
+    paddingTop: space.md,
     paddingHorizontal: space.xl,
     gap: space.lg,
-    borderTopWidth: 1,
-    borderColor: colors.border,
     width: '100%',
     maxWidth: 560,
     alignSelf: 'center',
   },
-  heroBlock: { alignItems: 'center', gap: 6 },
-  metrics: { flexDirection: 'row' },
-  metric: { flex: 1, alignItems: 'center', gap: 2 },
-  goal: {
-    gap: space.sm,
-    padding: space.lg,
-    borderRadius: radius.lg,
+  heroRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: 8 },
+  heroUnit: { fontSize: 30, fontWeight: '900', letterSpacing: -0.5 },
+  statsCard: {
+    gap: space.md,
+    paddingVertical: space.lg,
+    paddingHorizontal: space.sm,
+    borderRadius: radius.md,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
   },
-  goalRow: { flexDirection: 'row', alignItems: 'center', gap: space.md },
-  controls: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: space.md, minHeight: 84 },
+  metrics: { flexDirection: 'row', alignItems: 'center' },
+  metric: { flex: 1, alignItems: 'center', gap: 2 },
+  metricValue: { flexDirection: 'row', alignItems: 'baseline', gap: 3 },
+  metricUnit: { fontSize: 12, fontWeight: '800', color: colors.text },
+  divider: { width: 1, height: 36, backgroundColor: colors.borderStrong },
+  subMetrics: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: space.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  goal: { gap: space.sm },
+  goalRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  goalLabel: { fontSize: 15, fontWeight: '500', fontVariant: ['tabular-nums'] },
+  controls: { flexDirection: 'row', alignItems: 'center', gap: space.lg, minHeight: 72 },
   pause: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    backgroundColor: colors.lime,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },

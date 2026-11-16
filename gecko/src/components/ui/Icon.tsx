@@ -4,6 +4,13 @@ import { colors } from '@/theme/tokens';
 
 /** Set de iconos propio (trazo 2 px, rejilla 24). Evita depender de una librería de iconos. */
 const PATHS = {
+  search: ['M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z', 'M20 20l-3.9-3.9'],
+  calendar: ['M5 5.5h14v14H5z', 'M5 10h14', 'M9 3v4', 'M15 3v4'],
+  info: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M12 11v5', 'M12 8h.01'],
+  chevronDown: ['M5 9l7 7 7-7'],
+  arrowRight: ['M5 12h14', 'M13 6l6 6-6 6'],
+  flag: ['M5 21V4', 'M5 4h13l-2.5 4.5L18 13H5'],
+  coins: ['M12 9c3.9 0 7-1.3 7-3s-3.1-3-7-3-7 1.3-7 3 3.1 3 7 3Z', 'M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6', 'M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6'],
   home: ['M3 10.5 12 3l9 7.5', 'M5 9.5V20h5v-6h4v6h5V9.5'],
   users: ['M16 20v-1.5a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4V20', 'M9 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z', 'M22 20v-1.5a4 4 0 0 0-3-3.85', 'M16 3.65a3.5 3.5 0 0 1 0 6.7'],
   target: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z', 'M12 12h.01'],

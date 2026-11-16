@@ -45,6 +45,11 @@ export function formatMoney(cents: number): string {
   return `${cents % 100 === 0 ? nf0.format(cents / 100) : nf2.format(cents / 100)} €`;
 }
 
+/** Importe siempre con céntimos: «10,00 €». */
+export function formatMoneyFull(cents: number): string {
+  return `${nf2.format(cents / 100)} €`;
+}
+
 export function formatTimeLeft(ms: number): string {
   if (ms <= 0) return 'Finalizado';
   const min = Math.floor(ms / 60_000);
@@ -82,8 +87,8 @@ export function formatRelative(ts: number, now: number): string {
 
 export const ACTIVITY_LABEL: Record<ActivityType, string> = {
   run: 'Running',
-  walk: 'Walking',
-  ride: 'Cycling',
+  walk: 'Caminar',
+  ride: 'Ciclismo',
 };
 
 export const ACTIVITY_VERB: Record<ActivityType, string> = {
@@ -101,6 +106,15 @@ export function formatGoalValue(metric: GoalMetric, value: number): string {
     case 'sessions':
       return `${formatInt(value)} ${value === 1 ? 'entreno' : 'entrenos'}`;
   }
+}
+
+/** Progreso frente al objetivo en una línea: «6,4 / 10 km». */
+export function formatProgress(metric: GoalMetric, value: number, target: number): string {
+  const done = Math.min(value, target);
+  if (metric === 'distance') {
+    return `${nfGoal.format(Math.floor(done / 100 + 1e-9) / 10)} / ${formatGoalValue('distance', target)}`;
+  }
+  return `${formatInt(done)} / ${formatGoalValue(metric, target)}`;
 }
 
 export function commitmentTitle(c: Pick<Commitment, 'activityType' | 'metric' | 'target'>): string {

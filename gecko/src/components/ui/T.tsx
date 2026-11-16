@@ -10,7 +10,7 @@ interface Props extends TextProps {
   center?: boolean;
 }
 
-/** Tipografía de la app. Las cifras deportivas usan peso black en cursiva y dígitos tabulares. */
+/** Tipografía de la app. Las cifras deportivas usan peso black y dígitos tabulares. */
 export function T({ variant = 'body', color, center, style, ...rest }: Props) {
   return (
     <Text
@@ -39,25 +39,22 @@ const styles = StyleSheet.create({
   stat: {
     fontSize: 24,
     lineHeight: 28,
-    fontWeight: '900',
-    fontStyle: 'italic',
-    letterSpacing: -0.6,
+    fontWeight: '800',
+    letterSpacing: -0.5,
     fontVariant: ['tabular-nums'],
   },
   statLg: {
     fontSize: 40,
     lineHeight: 44,
     fontWeight: '900',
-    fontStyle: 'italic',
-    letterSpacing: -1.5,
+    letterSpacing: -1.2,
     fontVariant: ['tabular-nums'],
   },
   hero: {
-    fontSize: 92,
-    lineHeight: 96,
+    fontSize: 84,
+    lineHeight: 90,
     fontWeight: '900',
-    fontStyle: 'italic',
-    letterSpacing: -4,
+    letterSpacing: -3.5,
     fontVariant: ['tabular-nums'],
   },
 });
