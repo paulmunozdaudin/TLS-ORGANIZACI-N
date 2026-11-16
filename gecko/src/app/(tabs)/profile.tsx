@@ -38,7 +38,7 @@ export default function Profile() {
     <Screen tabbed>
       <View style={styles.head}>
         <View style={styles.avatar}>
-          <Gecko mood={mood} size={84} animated={false} />
+          <Gecko mood={mood} size={150} animated={false} />
         </View>
         <View style={styles.flex}>
           <T variant="title">{user?.name}</T>
@@ -198,7 +198,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.lime,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 6,
     overflow: 'hidden',
   },
   rank: {

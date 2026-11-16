@@ -40,7 +40,7 @@ export default function Start() {
   if (recording) {
     return (
       <Screen tabbed scroll={false} contentStyle={styles.center}>
-        <Gecko mood="motivated" size={170} />
+        <Gecko mood="motivated" size={220} />
         <T variant="title" center>{ACTIVITY_LABEL[recordingType]} en curso</T>
         <T variant="caption" center>Tu actividad se sigue grabando.</T>
         <Button label="Volver a la actividad" icon="bolt" onPress={() => router.push('/activity/live')} style={styles.wide} />

@@ -34,7 +34,7 @@ export default function Welcome() {
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Screen contentStyle={styles.content}>
         <View style={styles.hero}>
-          <Gecko mood="motivated" size={190} />
+          <Gecko mood="neutral" size={250} />
           <T style={styles.brand}>GECKO</T>
           <T variant="display" center>
             BET ON{'\n'}

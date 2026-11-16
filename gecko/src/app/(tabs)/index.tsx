@@ -75,7 +75,7 @@ export default function Home() {
             <T variant="label" color={colors.lime}>Nivel {stats.level.level} · {stats.rank.name}</T>
           </View>
           <View style={styles.heroGecko}>
-            <Gecko mood={mood} size={168} />
+            <Gecko mood={mood} size={210} />
           </View>
         </View>
         <Button label="Crear compromiso" icon="plus" onPress={() => router.push('/commitment/new')} />
@@ -174,11 +174,11 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   chipText: { fontWeight: '900', fontSize: 15, fontVariant: ['tabular-nums'] },
-  hero: { flexDirection: 'row', alignItems: 'flex-end', minHeight: 172 },
+  hero: { flexDirection: 'row', alignItems: 'flex-end', minHeight: 200 },
   heroText: { flex: 1, gap: 8, paddingBottom: space.xl },
   heroLine: { fontSize: 17, lineHeight: 23, color: colors.textMuted },
   // La mascota asoma por detrás del botón, como si se apoyara en él.
-  heroGecko: { marginBottom: -14, marginRight: -8 },
+  heroGecko: { marginBottom: -10, marginRight: -4 },
   section: { gap: space.md },
   tiles: { flexDirection: 'row', gap: space.md },
   tile: { flex: 1, alignItems: 'center', gap: 4, paddingHorizontal: space.sm },

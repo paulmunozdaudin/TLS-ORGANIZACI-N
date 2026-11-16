@@ -101,7 +101,7 @@ export default function CommitmentDetail() {
       </Card>
 
       <Card tone="high" style={styles.message}>
-        <Gecko mood={copy.mood} size={72} />
+        <Gecko mood={copy.mood} size={104} animated={false} />
         <T variant="caption" style={styles.flex}>{copy.text}</T>
       </Card>
 

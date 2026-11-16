@@ -106,7 +106,7 @@ export default function ActivitySummary() {
         <View style={styles.hero}>
           <View style={styles.celebration}>
             {mood === 'happy' ? <Rays size={300} /> : null}
-            <Gecko mood={mood} size={210} />
+            <Gecko mood={mood} size={250} />
           </View>
           <T style={styles.headline} center>{headline}</T>
         </View>
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   missing: { justifyContent: 'center', gap: space.lg },
   hero: { alignItems: 'center' },
-  celebration: { width: 300, height: 250, alignItems: 'center', justifyContent: 'flex-end' },
+  celebration: { width: 300, height: 262, alignItems: 'center', justifyContent: 'flex-end' },
   headline: {
     fontSize: 40,
     lineHeight: 42,
