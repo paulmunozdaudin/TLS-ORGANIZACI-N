@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // App móvil independiente (Expo), con su propia configuración:
+    "gecko/**",
   ]),
 ]);
 

@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Gecko",
+    "slug": "gecko",
+    "scheme": "gecko",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0B0A",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0B0A"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.gecko.mobile",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Gecko usa tu ubicación para registrar la ruta, la distancia y el ritmo de tus actividades y verificar tus compromisos.",
+        "NSMotionUsageDescription": "Gecko usa el sensor de movimiento para contar tus pasos."
+      }
+    },
+    "android": {
+      "package": "app.gecko.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0B0A",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "ACTIVITY_RECOGNITION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Gecko usa tu ubicación para registrar la ruta, la distancia y el ritmo de tus actividades y verificar tus compromisos."
+        }
+      ],
+      [
+        "expo-sensors",
+        { "motionPermission": "Gecko usa el sensor de movimiento para contar tus pasos." }
+      ]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}
