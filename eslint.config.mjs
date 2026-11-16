@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Separate Expo app with its own tooling (see fantasy/README.md).
     "fantasy/**",
+    "matchiq/**",
   ]),
 ]);
 

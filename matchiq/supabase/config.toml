@@ -1,0 +1,6 @@
+# Supabase project configuration for MATCH.IQ.
+project_id = "matchiq"
+
+[functions.sync]
+# Invoked by pg_cron with a shared secret (x-cron-secret), not by users.
+verify_jwt = false

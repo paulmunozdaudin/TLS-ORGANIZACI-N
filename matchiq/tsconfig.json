@@ -1,0 +1,33 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/assets/*": [
+        "./assets/*"
+      ],
+      "@core/*": [
+        "./supabase/functions/_shared/core/*"
+      ]
+    },
+    "types": [
+      "jest"
+    ],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "supabase/functions/*/index.ts",
+    "supabase/functions/_shared/jobs",
+    "dist",
+    "node_modules"
+  ]
+}
