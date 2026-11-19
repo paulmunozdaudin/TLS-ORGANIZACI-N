@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+  <defs><path id="ring" d="M 500 500 m -395 0 a 395 395 0 1 1 790 0 a 395 395 0 1 1 -790 0"/></defs>
+  <circle cx="500" cy="500" r="490" fill="#0b0b0b"/>
+  <circle cx="500" cy="500" r="455" fill="none" stroke="#f2f2f2" stroke-width="8"/>
+  <circle cx="500" cy="500" r="335" fill="none" stroke="#f2f2f2" stroke-width="8"/>
+  <text font-family="SG" font-weight="700" font-size="54" fill="#f2f2f2" letter-spacing="9"><textPath href="#ring">PRE-REVENUE ★ POST-IRONY ★ EST. 2026 ★ STEALTH MODE ★</textPath></text>
+  <ellipse cx="500" cy="500" rx="300" ry="40" fill="none" stroke="#f2f2f2" stroke-width="4" opacity="0.35"/><ellipse cx="500" cy="500" rx="300" ry="95" fill="none" stroke="#f2f2f2" stroke-width="4" opacity="0.35"/><ellipse cx="500" cy="500" rx="300" ry="150" fill="none" stroke="#f2f2f2" stroke-width="4" opacity="0.35"/><ellipse cx="500" cy="500" rx="300" ry="205" fill="none" stroke="#f2f2f2" stroke-width="4" opacity="0.35"/><ellipse cx="500" cy="500" rx="300" ry="260" fill="none" stroke="#f2f2f2" stroke-width="4" opacity="0.35"/>
+  <text x="500" y="560" font-family="Anton" font-size="230" text-anchor="middle" fill="#bdbdbd" stroke="#0b0b0b" stroke-width="18" paint-order="stroke" letter-spacing="8">LARP</text>
+  <rect x="330" y="600" width="340" height="62" fill="#ff7a1f"/>
+  <text x="500" y="646" font-family="SG" font-weight="700" font-size="44" text-anchor="middle" fill="#0b0b0b" letter-spacing="14">STUDIO</text>
+  </svg>
